@@ -32,7 +32,7 @@ This repository contains minimally reproducible code for R and Python to access 
 Global Soccer Rankings Public API documentation can be viewed [here](http://globalrankings.io/redoc), for details on query parameters and outputs.
 
 <!-- Add the link to feature descriptions -->
-The details of feature descriptions are provided [here](). 
+The details of feature descriptions are provided [here](https://github.com/Aelvangunduz/globalplayerrankings/blob/main/docs/feature_descriptions.md). 
 
 The raw statistics definitions can be obtained from [WyScout API Docs](https://apidocs.wyscout.com/#tag/Advanced-Stats/paths/~1players~1{wyId}~1matches~1{matchWyId}~1advancedstats/get).
 
