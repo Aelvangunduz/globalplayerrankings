@@ -17,6 +17,7 @@ Strength features are the binomial statistical test values for ratio variables.
 ## List of Available Features
 
 |   Feature Name    |    Type    |    Numerator    |    Denominator     |
+|-------------------|------------|-----------------|--------------------|
 |interceptions_reg  |Regular     | Interceptions| 1|   
 |shot_assists_reg   |Regular| Shot Assists| 1|
 |key_passes_str     |Strength| Successful Key Passes| Key Passes|
