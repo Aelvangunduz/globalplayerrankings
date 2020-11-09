@@ -1,19 +1,113 @@
 ---
 title: "Minimal Example for R"
-output: html_notebook
-author: Elvan Aydemir
+author: "Elvan Aydemir"
+output:
+  html_document:
+    df_print: paged
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+This notebook contains minimally reproducible example for R.
 
 ```{r}
-plot(cars)
+library(yaml)
+library(httr)
+library(jsonlite)
+
+setwd('..')
+# getwd()
+
+list_output_to_df <- function(json_list){
+  df = jsonlite::fromJSON(json_list)
+  if(length(df) > 0){
+    indices = names(df[[1]])
+  }
+  cnames = names(df)
+
+  df = lapply(df, function(x) data.frame(unlist(x), stringsAsFactors = F))
+  df = data.frame(df, stringsAsFactors = F)
+  colnames(df) = cnames
+  
+  if(length(indices) > 0){
+    df[['index']] = indices
+  }
+  df
+}
+
+config = yaml::read_yaml('config.yml')
+api_url = config['api_url']
+
+paste('API URL:', api_url)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+```{r}
+# Specify the variable weights
+var_weights = list("crosses_str" = 2, "interceptions_reg" = 1, "shot_assists_reg"=3, "recoveries_to_fouls_rat"=1)
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+# Specify relevant positions
+rel_positions = c("lb5", "rb5", "lb", "rb", "lwb", "rwb")
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+# Analysis Window
+window_start = '2017-08-01'
+window_end = '2018-06-30'
+
+#Competitions included
+comps = c('Domestic league', 'International cup')
+
+# Time Decay
+alpha = 0.99
+
+# Minimum number of games
+min_games = 10
+
+# Minimum percentage in relevant positions
+min_pct = 75
+
+# Minimum minutes tagged
+min_tag = 10
+```
+
+```{r}
+# Turn variable weights into string
+
+for(i in 1:length(var_weights)){
+  if(i == 1){
+    var_param = paste0('"', names(var_weights)[i], '":', var_weights[[i]])
+  }else{
+    var_param = paste(var_param, paste0('"', names(var_weights)[i], '":', var_weights[[i]]), sep = ',')
+  }
+  
+}
+
+var_param = paste0('{', var_param, '}')
+```
+
+
+```{r}
+pos_param = paste(rel_positions, collapse = ',')
+comps_param = paste(comps, collapse = ',')
+```
+
+```{r}
+payload = list('varWeights'=var_param, 'positions'=pos_param, 'window_start'=window_start, 'window_end'=window_end,
+               "competitions_included"=comps_param, "time_decay_coef"=alpha, "min_num_games"=min_games, "min_pct_played"=min_pct)
+resp = httr::GET(api_url, query=payload)
+json_out = content(resp)
+```
+
+```{r}
+names(json_out)
+```
+
+```{r}
+ranks = json_out[['player_ranks']]
+ranks_df = list_output_to_df(ranks)
+ranks_df[['index']] = as.numeric(ranks_df[['index']])
+colnames(ranks_df) = gsub('index', 'playerId', colnames(ranks_df))
+```
+
+```{r}
+player_averages = json_out[['player_averages']]
+player_averages = list_output_to_df(player_averages)
+player_averages = player_averages[setdiff(colnames(player_averages), 'index')]
+```
+
