@@ -14,13 +14,27 @@ The methodology consists of couple of main steps:
 
 ## Data
 
-"This repository uses the publicly available Events dataset by WyScout to perform calculations."[[1]](#1)
+This repository uses the publicly available Events dataset by WyScout [[1]](#1) to perform calculations.
 
-The dataset can be found [here](https://www.nature.com/articles/s41597-019-0247-7)
+The dataset can be found [here](https://www.nature.com/articles/s41597-019-0247-7).
 
 ## Code
 
-This repository contains minimally reproducible
+This repository contains minimally reproducible code for R and Python to access public API for making computations. While the sample code is provided in R and Python, REST API can be accessed through any programming language who can perform HTTP requests to a server. The API request takes in user configurations and outputs the following data based on those:
+
+1. User & Scale configuration object
+2. Raw in-game statistics that fit the criteria. For instance, if the date window is selected between '2017-08-30' and '2018-01-01', only the data for this period will be returned.
+3. Computed scale coefficients for the matches that fit the criteria
+4. Per 90 scaled averages of player statistics
+5. Features computed through the methodology
+6. Player rankings object
+
+Global Soccer Rankings Public API documentation can be viewed [here](http://globalrankings.io/redoc), for details on query parameters and outputs.
+
+<!-- Add the link to feature descriptions -->
+The details of feature descriptions are provided [here](). 
+
+The raw statistics definitions can be obtained from [WyScout API Docs](https://apidocs.wyscout.com/#tag/Advanced-Stats/paths/~1players~1{wyId}~1matches~1{matchWyId}~1advancedstats/get).
 
 ## References
 <a id="1">[1]</a> 
